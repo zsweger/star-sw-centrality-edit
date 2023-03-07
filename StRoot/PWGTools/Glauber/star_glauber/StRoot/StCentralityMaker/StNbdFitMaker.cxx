@@ -178,6 +178,9 @@ void StNbdFitMaker::CalculateCentrality(const TH1& hdata, const TH1& hmc) const
 			UInt_t bin = 0 ;
 			const Int_t nbin = hmc.GetNbinsX() ;
 			Double_t sum = 0.0;
+			//The following is the original centrality-cut calculation routine. This has been substituted for a routine
+			// in which the data is integrated to get the 0-20% cuts and the Glauber is integrated to get the >20% cuts.
+			// The original routine here simply integrated the Glauber to get all cuts.
 			/*for(Int_t im=0; im<nbin; im++){
 				const Double_t M      = (i==0) ? hmc.GetBinCenter(im+1) : hmc.GetBinCenter(nbin-im) ;
 				const Int_t Mint      = (i==0) ? im : nbin-im-1 ;
@@ -198,34 +201,30 @@ void StNbdFitMaker::CalculateCentrality(const TH1& hdata, const TH1& hmc) const
 					bin++;
 				}
 			}// multiplicity loop*/
+			//The following is the new centrality-cut calculation routine.
 			Double_t distance = 1000.0;
                         for(Int_t im=0; im<nbin; im++){
-                                const Double_t M      = (i==0) ? hmc->GetBinCenter(im+1)+0.5 : hmc->GetBinCenter(nbin-im)+0.5 ;
-                                const Int_t Mint      = TMath::Nint(M) ;
-                                Double_t count = 0;
-                                if( bin<4 ) count = (i==0) ? hdata->GetBinContent(im+1) : hdata->GetBinContent(nbin-im) ;
+                                const Double_t M      = (i==0) ? hmc.GetBinCenter(im+1) : hmc.GetBinCenter(nbin-im) ;
+                                const Int_t Mint      = (i==0) ? im : nbin-im-1 ;
+                                Double_t count = 0.0;
+                                if( bin<4 ) count = (i==0) ? hdata->GetBinContent(im+1) : hdata->GetBinContent(nbin-im);
                                 else count = (i==0) ? hmc->GetBinContent(im+1) : hmc->GetBinContent(nbin-im) ;
                                 if( count == 0.0 ) continue ;
+
                                 sum += count ;
                                 const Double_t fraction    = sum / nevent ;
                                 const Double_t fCentBinCut = centralityCut[bin] * scale;
                                 const Double_t R           = (i==0) ? (1.0 - fraction) : fraction ;
-                                Double_t thisdistance = TMath::Abs(R - fCentBinCut );
+                                //const Bool_t isCentOk      = (i==0) ? R <= fCentBinCut : R > fCentBinCut ;
                                 const Bool_t isCentOk      = (thisdistance > distance) ;
                                 distance=thisdistance;
-                                if( isCentOk && bin < ncent ){
-                                        sum = sum-count;
-                                        const Double_t thisM      = (i==0) ? hmc->GetBinCenter(im+1)+0.5 : hmc->GetBinCenter(nbin-im)+0.5 ;
-                                        const Int_t thisMint      = TMath::Nint(thisM) ;
-                                        double thisfraction = sum / nevent ;
-                                        Double_t thisR           = (i==0) ? (1.0 - thisfraction) : thisfraction ;
-                                        cout << Form("%2.2f - %2.2f (%%) :  M > %4d (im=%3d, M=%1.1f, bin=%4d) (sum, total, fraction>cut) = (%1.3f, %1.3f, %1.3f>%1.3f)",TMath::Abs(centralityMin[bin]*scale), TMath::Abs(centralityMax[bin]*scale), thisMint, im-1, thisM, bin, sum, nevent, thisR, fCentBinCut) << endl;
-                                        centBin[i][it][bin] = (Double_t)thisMint ;
-                                        bin++;
-                                        sum = sum+count;
-                                        distance=1000.0;
-                                }
 
+                                if( isCentOk && bin < ncent ){
+                                        cout << Form("%2.2f - %2.2f (%%) :  M > %4d (im=%3d, M=%1.1f, bin=%4d) (sum, total, fraction>cut) = (%1.3f, %1.3f, %1.3f>%1.3f)",
+                                                        TMath::Abs(centralityMin[bin]*scale), TMath::Abs(centralityMax[bin]*scale), Mint, im, M, bin, sum, nevent, R, fCentBinCut) << endl;
+                                        centBin[i][it][bin] = (Double_t)Mint ;
+                                        bin++;
+                                }
                         }// multiplicity loop
 		}// different total cross section
 	}// from peripheral or central
