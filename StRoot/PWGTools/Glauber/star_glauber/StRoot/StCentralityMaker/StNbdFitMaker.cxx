@@ -215,6 +215,7 @@ void StNbdFitMaker::CalculateCentrality(const TH1& hdata, const TH1& hmc) const
                                 const Double_t fraction    = sum / nevent ;
                                 const Double_t fCentBinCut = centralityCut[bin] * scale;
                                 const Double_t R           = (i==0) ? (1.0 - fraction) : fraction ;
+				Double_t thisdistance = TMath::Abs(R - fCentBinCut );
                                 //const Bool_t isCentOk      = (i==0) ? R <= fCentBinCut : R > fCentBinCut ;
                                 const Bool_t isCentOk      = (thisdistance > distance) ;
                                 distance=thisdistance;
