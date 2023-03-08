@@ -205,7 +205,7 @@ void StNbdFitMaker::CalculateCentrality(const TH1& hdata, const TH1& hmc) const
 			Double_t distance = 1000.0;
                         for(Int_t im=0; im<nbin; im++){
                                 const Double_t M      = (i==0) ? hmc.GetBinCenter(im+1) : hmc.GetBinCenter(nbin-im) ;
-                                const Int_t Mint      = (i==0) ? im : nbin-im-1 ;
+                                const Int_t Mint      = (i==0) ? im : nbin-im ;
                                 Double_t count = 0.0;
                                 if( bin<4 ) count = (i==0) ? hdata.GetBinContent(im+1) : hdata.GetBinContent(nbin-im);
                                 else count = (i==0) ? hmc.GetBinContent(im+1) : hmc.GetBinContent(nbin-im) ;
@@ -215,7 +215,7 @@ void StNbdFitMaker::CalculateCentrality(const TH1& hdata, const TH1& hmc) const
                                 const Double_t fraction    = sum / nevent ;
                                 const Double_t fCentBinCut = centralityCut[bin] * scale;
                                 const Double_t R           = (i==0) ? (1.0 - fraction) : fraction ;
-				Double_t thisdistance = TMath::Abs(R - fCentBinCut );
+                                Double_t thisdistance = TMath::Abs(R - fCentBinCut );
                                 //const Bool_t isCentOk      = (i==0) ? R <= fCentBinCut : R > fCentBinCut ;
                                 const Bool_t isCentOk      = (thisdistance > distance) ;
                                 distance=thisdistance;
@@ -225,6 +225,7 @@ void StNbdFitMaker::CalculateCentrality(const TH1& hdata, const TH1& hmc) const
                                                         TMath::Abs(centralityMin[bin]*scale), TMath::Abs(centralityMax[bin]*scale), Mint, im, M, bin, sum, nevent, R, fCentBinCut) << endl;
                                         centBin[i][it][bin] = (Double_t)Mint ;
                                         bin++;
+                                        distance=1000.0;
                                 }
                         }// multiplicity loop
 		}// different total cross section
