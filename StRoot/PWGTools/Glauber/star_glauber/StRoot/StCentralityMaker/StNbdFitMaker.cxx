@@ -207,7 +207,7 @@ void StNbdFitMaker::CalculateCentrality(const TH1& hdata, const TH1& hmc) const
                                 const Double_t M      = (i==0) ? hmc.GetBinCenter(im+1) : hmc.GetBinCenter(nbin-im) ;
                                 const Int_t Mint      = (i==0) ? im : nbin-im ;
                                 Double_t count = 0.0;
-                                if( bin<4 ) count = (i==0) ? hdata.GetBinContent(im+1) : hdata.GetBinContent(nbin-im);
+                                if( (i==0 && bin>11) || (i!=0 && bin<4) ) count = (i==0) ? hdata.GetBinContent(im+1) : hdata.GetBinContent(nbin-im);
                                 else count = (i==0) ? hmc.GetBinContent(im+1) : hmc.GetBinContent(nbin-im) ;
                                 if( count == 0.0 ) continue ;
 
