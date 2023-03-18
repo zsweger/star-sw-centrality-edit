@@ -333,7 +333,7 @@ void StCentralityAnalyzer::createEventHistograms() {
   mTree->Branch("nBTOFMatched", &mTree_nBTOFMatched, "nBTOFMatched/D");
 
   Int_t refMultBins = 500;
-  Float_t refMult[2] = { -0.5, 499.5 };
+  Float_t refMult[2] = { 0.0, 500.0 }; //Integer bin edges because we want final centrality cuts to be on integers
   hRefMult = new TH1F( Form("hRefMult"),
 		       Form("refMult;refMult;events"),
 		       refMultBins, refMult[0], refMult[1]);
