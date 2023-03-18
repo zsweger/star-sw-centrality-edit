@@ -204,7 +204,6 @@ void StNbdFitMaker::CalculateCentrality(const TH1& hdata, const TH1& hmc) const
 			//The following is the new centrality-cut calculation routine.
 			Double_t distance = 1000.0;
                         for(Int_t im=0; im<nbin; im++){
-                                const Double_t M      = (i==0) ? hmc.GetBinCenter(im+1) : hmc.GetBinCenter(nbin-im) ;
                                 const Int_t Mint      = (i==0) ? im : nbin-im ;
                                 Double_t count = 0.0;
                                 if( (i==0 && bin>11) || (i!=0 && bin<4) ) count = (i==0) ? hdata.GetBinContent(im+1) : hdata.GetBinContent(nbin-im);
@@ -222,7 +221,7 @@ void StNbdFitMaker::CalculateCentrality(const TH1& hdata, const TH1& hmc) const
 
                                 if( isCentOk && bin < ncent ){
                                         cout << Form("%2.2f - %2.2f (%%) :  M > %4d (im=%3d, M=%1.1f, bin=%4d) (sum, total, fraction>cut) = (%1.3f, %1.3f, %1.3f>%1.3f)",
-                                                        TMath::Abs(centralityMin[bin]*scale), TMath::Abs(centralityMax[bin]*scale), Mint, im, M, bin, sum, nevent, R, fCentBinCut) << endl;
+                                                        TMath::Abs(centralityMin[bin]*scale), TMath::Abs(centralityMax[bin]*scale), Mint, im, Mint, bin, sum, nevent, R, fCentBinCut) << endl;
                                         centBin[i][it][bin] = (Double_t)Mint ;
                                         bin++;
                                         distance=1000.0;
